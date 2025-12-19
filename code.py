@@ -35,8 +35,52 @@ class vector_ :
         # Euclidean distance 
         if (mode == 0): 
             return math.sqrt( (abs(p0.x - p1.x)**2) + (abs(p0.y - p1.y)**2) + (abs(p0.z - p1.z)**2) )
-        else :
-            print("!!!!")
+        # Manhattan Distance (L1 norm)
+        elif mode == 1:
+            return abs(p0.x - p1.x) + abs(p0.y - p1.y) + abs(p0.z - p1.z)
+        
+        # Chebyshev Distance (L∞ norm)
+        elif mode == 2:
+            return max(abs(p0.x - p1.x), abs(p0.y - p1.y), abs(p0.z - p1.z))
+        
+        # Minkowski Distance (generalized)
+        elif mode == 3:
+            p = 3
+            return (abs(p0.x - p1.x)**p + abs(p0.y - p1.y)**p + abs(p0.z - p1.z)**p)**(1/p)
+        
+        # Mode 4: Cosine Distance
+        elif mode == 4:
+            # Inner product <p0, p1>
+            inner_product = p0.x * p1.x + p0.y * p1.y + p0.z * p1.z
+
+            norm_p0 = math.sqrt(p0.x**2 + p0.y**2 + p0.z**2)
+            norm_p1 = math.sqrt(p1.x**2 + p1.y**2 + p1.z**2)
+            
+            if norm_p0 == 0 or norm_p1 == 0:
+                return 1.0
+            
+            cosine_similarity = inner_product / (norm_p0 * norm_p1)
+            
+            return 1 - cosine_similarity
+        
+        # Mode 5: Squared Euclidean Distance
+        elif mode == 5:
+            diff_x = p0.x - p1.x
+            diff_y = p0.y - p1.y
+            diff_z = p0.z - p1.z
+            return diff_x**2 + diff_y**2 + diff_z**2
+        
+        # Mode 6: Canberra Distance
+        elif mode == 6:
+            sum_dist = 0
+            coords = [(p0.x, p1.x), (p0.y, p1.y), (p0.z, p1.z)]
+            for c0, c1 in coords:
+                if abs(c0) + abs(c1) != 0:
+                    sum_dist += abs(c0 - c1) / (abs(c0) + abs(c1))
+            return sum_dist
+        
+        else:
+            return None
 #---------------------------------------------------------------------------------------------------------------------------
 
 #---------------------------------------------------------------------------------------------------------------------------
@@ -57,7 +101,7 @@ class vector_ :
         points_by_distance = []
 
         for i in range (0 , len(points)) :
-            distance = vector_.calculate_distance( 0 , points[i] , v_to_classify)
+            distance = vector_.calculate_distance( 3 , points[i] , v_to_classify)
             if (distance != 0):
                 points_by_distance.append((points[i] , distance))
             
@@ -145,8 +189,8 @@ def __main__() -> None :
     v11 = vector_(7,6,6 , 2)
     v12 = vector_(8,7,6 , 2)
 
-    v_in = vector_(0.1,0.1,0.1)
-    # v_in = vector_(9,9,9)
+    # v_in = vector_(0.1,0.1,0.1)
+    v_in = vector_(9,9,9)
     # v_in = vector_(6,7,7)
 
     k_input = 3
