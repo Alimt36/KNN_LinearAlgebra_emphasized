@@ -4,6 +4,8 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt 
 import math
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
 
 #---------------------------------------------------------------------------------------------------------------------------
 points = []   
@@ -95,13 +97,13 @@ class vector_ :
 
 #---------------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def KNN( k=3 , v_to_classify:vector_=None , points=None ) :
+    def KNN( k=3 , v_to_classify:vector_=None , points=None , distance_mode=0 ) :
 
         # global points_by_distance
         points_by_distance = []
 
         for i in range (0 , len(points)) :
-            distance = vector_.calculate_distance( 3 , points[i] , v_to_classify)
+            distance = vector_.calculate_distance( distance_mode , points[i] , v_to_classify)
             if (distance != 0):
                 points_by_distance.append((points[i] , distance))
             
@@ -117,7 +119,7 @@ class vector_ :
                 count_ += 1
         
         # print(count_)
-        print(temp)
+        # print(temp)
 
         temp = [0] * count_
         for i in range (0 , k):
@@ -132,7 +134,6 @@ def plot_points(points_by_distance, v_to_classify, k):
     fig = plt.figure(figsize=(10, 8))
     ax = fig.add_subplot(111, projection='3d')
     
-    # Separate points by classification
     classifications = {}
     for point, distance in points_by_distance:
         if point.classification not in classifications:
@@ -141,14 +142,12 @@ def plot_points(points_by_distance, v_to_classify, k):
         classifications[point.classification]['y'].append(point.y)
         classifications[point.classification]['z'].append(point.z)
     
-    # Plot each classification with different color
     colors = ['red', 'blue', 'green', 'orange', 'purple']
     for i, (cls, coords) in enumerate(classifications.items()):
         ax.scatter(coords['x'], coords['y'], coords['z'], 
                   c=colors[i % len(colors)], marker='o', s=100, 
                   label=f'Class {cls}', alpha=0.6)
     
-    # Highlight k-nearest neighbors
     k_nearest = points_by_distance[:k]
     knn_x = [p.x for p, d in k_nearest]
     knn_y = [p.y for p, d in k_nearest]
@@ -156,7 +155,6 @@ def plot_points(points_by_distance, v_to_classify, k):
     ax.scatter(knn_x, knn_y, knn_z, c='black', marker='x', s=200, 
               linewidths=3, label=f'{k} Nearest Neighbors')
     
-    # Plot the point to classify
     ax.scatter(v_to_classify.x, v_to_classify.y, v_to_classify.z, 
               c='yellow', marker='*', s=500, edgecolors='black', 
               linewidths=2, label='Point to Classify')
@@ -170,37 +168,92 @@ def plot_points(points_by_distance, v_to_classify, k):
 #---------------------------------------------------------------------------------------------------------------------------
 
 #---------------------------------------------------------------------------------------------------------------------------
+def load_iris_dataset():
+    iris = load_iris()
+    X = iris.data
+    y = iris.target  # Classes: 0, 1, 2 
+    
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    
+    return X_train, X_test, y_train, y_test
+
+def create_vectors_from_dataset(X, y):
+
+    global points
+    points = []
+    for i in range(len(X)):
+        x, y_coord, z = X[i][0], X[i][1], X[i][2]
+        classification = int(y[i])
+        vector_(x, y_coord, z, classification)
+    return points
+
+def test_knn_accuracy(X_test, y_test, k=3, distance_mode=0):
+
+    correct = 0
+    total = len(X_test)
+    for i in range(total):
+        test_point = vector_.__new__(vector_)
+        test_point.x = X_test[i][0]
+        test_point.y = X_test[i][1]
+        test_point.z = X_test[i][2]
+        test_point.classification = None
+        
+        predicted_class, _ = vector_.KNN(k=k, v_to_classify=test_point, points=points, distance_mode=distance_mode)
+        
+        if predicted_class == int(y_test[i]):
+            correct += 1
+    
+    accuracy = (correct / total) * 100
+    return accuracy
+#---------------------------------------------------------------------------------------------------------------------------
+
+#---------------------------------------------------------------------------------------------------------------------------
 def __main__() -> None :
     # print("!!!!")
 
-    v1 = vector_(1,1,1 , 0)
-    v2 = vector_(2,2,2 , 0)
-    v3 = vector_(3,3,3 , 0)
+    # v1 = vector_(1,1,1 , 0)
+    # v2 = vector_(2,2,2 , 0)
+    # v3 = vector_(3,3,3 , 0)
 
-    v4 = vector_(10,10,10 , 1)
-    v5 = vector_(11,11,11 , 1)
-    v6 = vector_(13,13,13 , 1)
+    # v4 = vector_(10,10,10 , 1)
+    # v5 = vector_(11,11,11 , 1)
+    # v6 = vector_(13,13,13 , 1)
 
-    v7 = vector_(1,0,0 , 0)
-    v8 = vector_(0,0,0 , 0)
-    v9 = vector_(0,1,1 , 0)
+    # v7 = vector_(1,0,0 , 0)
+    # v8 = vector_(0,0,0 , 0)
+    # v9 = vector_(0,1,1 , 0)
 
-    v10 = vector_(6,6,6 , 2)
-    v11 = vector_(7,6,6 , 2)
-    v12 = vector_(8,7,6 , 2)
+    # v10 = vector_(6,6,6 , 2)
+    # v11 = vector_(7,6,6 , 2)
+    # v12 = vector_(8,7,6 , 2)
 
-    # v_in = vector_(0.1,0.1,0.1)
-    v_in = vector_(9,9,9)
-    # v_in = vector_(6,7,7)
+    # # v_in = vector_(0.1,0.1,0.1)
+    # v_in = vector_(9,9,9)
+    # # v_in = vector_(6,7,7)
 
-    k_input = 3
+    # k_input = 3
 
-    v_in.classification , points_by_distance = vector_.KNN(k=k_input , v_to_classify=v_in , points=points)
+    # v_in.classification , points_by_distance = vector_.KNN(k=k_input , v_to_classify=v_in , points=points)
     
-    print(v_in.classification)
+    # print(v_in.classification)
 
-    plot_points(points_by_distance, v_in , k_input)
+    # plot_points(points_by_distance, v_in , k_input)
+    # Load real dataset
 
+    k_input = 4
+
+    distance_mode = 0
+
+    X_train, X_test, y_train, y_test = load_iris_dataset()
+    create_vectors_from_dataset(X_train, y_train)
+    
+    test_point = vector_(X_test[0][0], X_test[0][1], X_test[0][2])
+    predicted, points_by_distance = vector_.KNN(k=k_input, v_to_classify=test_point, points=points , distance_mode=distance_mode)
+    
+    print(f"\nPredicted class: {predicted}")
+    print(f"Actual class: {int(y_test[0])}")
+    
+    plot_points(points_by_distance, test_point, k=k_input)
 
 __main__()
 #---------------------------------------------------------------------------------------------------------------------------
