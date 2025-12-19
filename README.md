@@ -6,13 +6,6 @@ A Python implementation of K-NN classification emphasizing linear algebra concep
 
 ---
 
-## 📦 Installation
-```bash
-pip install numpy pandas matplotlib scikit-learn
-```
-
----
-
 ## 📖 Class: `Linear_Algebra`
 
 ### `__init__(x, y, z=0, classification=None)`
@@ -92,8 +85,52 @@ Creates 3D visualization of classification results
 
 ## 🧮 Linear Algebra Connection
 
-- **Vectors**: Each point is a vector in ℝ³
-- **Inner Products**: `d(u,v) = √(<u-v, u-v>)`
-- **Cosine Similarity**: `cos(θ) = <u,v> / (||u|| × ||v||)`
+**Vector Representation:** Each data point is a vector in ℝ³ space
+
+### Mode 0: Euclidean Distance (L2 norm)
+```
+d(u,v) = √(<u-v, u-v>) = √(||u-v||²)
+```
+Uses inner product of difference vector with itself
+
+### Mode 1: Manhattan Distance (L1 norm)
+```
+d(u,v) = |u₁-v₁| + |u₂-v₂| + |u₃-v₃|
+```
+Sum of absolute coordinate differences
+
+### Mode 2: Chebyshev Distance (L∞ norm)
+```
+d(u,v) = max(|u₁-v₁|, |u₂-v₂|, |u₃-v₃|)
+```
+Maximum absolute difference across all dimensions
+
+### Mode 3: Minkowski Distance
+```
+d(u,v) = (|u₁-v₁|ᵖ + |u₂-v₂|ᵖ + |u₃-v₃|ᵖ)^(1/p)
+```
+Generalized distance metric (p=3 in implementation)
+
+### Mode 4: Cosine Distance
+```
+d(u,v) = 1 - (<u,v> / (||u|| × ||v||))
+where ||u|| = √(<u,u>)
+```
+Uses inner product directly to measure angle between vectors
+
+### Mode 5: Squared Euclidean Distance
+```
+d(u,v) = <u-v, u-v> = ||u||² - 2<u,v> + ||v||²
+```
+Pure inner product without square root (faster computation)
+
+### Mode 6: Canberra Distance
+```
+d(u,v) = Σ |uᵢ-vᵢ| / (|uᵢ| + |vᵢ|)
+```
+Weighted Manhattan distance, sensitive to small changes near zero
 
 ---
+
+## 👤 Author
+[@Alimt36](https://github.com/Alimt36)
