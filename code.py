@@ -7,7 +7,7 @@ import math
 
 #---------------------------------------------------------------------------------------------------------------------------
 points = []   
-
+# points_by_distance = []
 #---------------------------------------------------------------------------------------------------------------------------
 
 #---------------------------------------------------------------------------------------------------------------------------
@@ -21,7 +21,6 @@ class vector_ :
         self.classification = classification
 
         global points 
-        # points.append((x,y,z , classification))
         points.append(self)
 #---------------------------------------------------------------------------------------------------------------------------
 
@@ -33,10 +32,97 @@ class vector_ :
 #---------------------------------------------------------------------------------------------------------------------------
     @staticmethod
     def calculate_distance(mode=0 , p0:vector_=None , p1:vector_=None ) -> float :
-        if (mode == 0): # Euclidean distance 
+        # Euclidean distance 
+        if (mode == 0): 
             return math.sqrt( (abs(p0.x - p1.x)**2) + (abs(p0.y - p1.y)**2) + (abs(p0.z - p1.z)**2) )
         else :
             print("!!!!")
+#---------------------------------------------------------------------------------------------------------------------------
+
+#---------------------------------------------------------------------------------------------------------------------------
+    @staticmethod
+    def print_by_distance(points_by_distance) -> None : 
+        # print(points_by_distance)
+        for point, distance in points_by_distance:
+            print("--------------------------------------")
+            print(f"Point: {point},\nDistance: {distance:.2f}")
+            print("--------------------------------------\n")
+#---------------------------------------------------------------------------------------------------------------------------
+
+#---------------------------------------------------------------------------------------------------------------------------
+    @staticmethod
+    def KNN( k=3 , v_to_classify:vector_=None , points=None ) :
+
+        # global points_by_distance
+        points_by_distance = []
+
+        for i in range (0 , len(points)) :
+            distance = vector_.calculate_distance( 0 , points[i] , v_to_classify)
+            if (distance != 0):
+                points_by_distance.append((points[i] , distance))
+            
+        points_by_distance.sort(key=lambda x: x[1])
+
+        vector_.print_by_distance(points_by_distance)
+
+        temp = []
+        count_ = 0
+        for i in range (0 , len(points)):
+            if (points[i].classification not in temp and points[i].classification != None) :
+                temp.append(points[i].classification)
+                count_ += 1
+        
+        # print(count_)
+        print(temp)
+
+        temp = [0] * count_
+        for i in range (0 , k):
+            p , d = points_by_distance[i]
+            temp[p.classification] += 1
+
+        return temp.index(max(temp)) , points_by_distance
+#---------------------------------------------------------------------------------------------------------------------------
+
+#---------------------------------------------------------------------------------------------------------------------------
+def plot_points(points_by_distance, v_to_classify, k):
+    fig = plt.figure(figsize=(10, 8))
+    ax = fig.add_subplot(111, projection='3d')
+    
+    # Separate points by classification
+    classifications = {}
+    for point, distance in points_by_distance:
+        if point.classification not in classifications:
+            classifications[point.classification] = {'x': [], 'y': [], 'z': []}
+        classifications[point.classification]['x'].append(point.x)
+        classifications[point.classification]['y'].append(point.y)
+        classifications[point.classification]['z'].append(point.z)
+    
+    # Plot each classification with different color
+    colors = ['red', 'blue', 'green', 'orange', 'purple']
+    for i, (cls, coords) in enumerate(classifications.items()):
+        ax.scatter(coords['x'], coords['y'], coords['z'], 
+                  c=colors[i % len(colors)], marker='o', s=100, 
+                  label=f'Class {cls}', alpha=0.6)
+    
+    # Highlight k-nearest neighbors
+    k_nearest = points_by_distance[:k]
+    knn_x = [p.x for p, d in k_nearest]
+    knn_y = [p.y for p, d in k_nearest]
+    knn_z = [p.z for p, d in k_nearest]
+    ax.scatter(knn_x, knn_y, knn_z, c='black', marker='x', s=200, 
+              linewidths=3, label=f'{k} Nearest Neighbors')
+    
+    # Plot the point to classify
+    ax.scatter(v_to_classify.x, v_to_classify.y, v_to_classify.z, 
+              c='yellow', marker='*', s=500, edgecolors='black', 
+              linewidths=2, label='Point to Classify')
+    
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_zlabel('Z')
+    ax.legend()
+    ax.set_title('K-NN Classification Visualization')
+    plt.show()
 #---------------------------------------------------------------------------------------------------------------------------
 
 #---------------------------------------------------------------------------------------------------------------------------
@@ -51,19 +137,25 @@ def __main__() -> None :
     v5 = vector_(11,11,11 , 1)
     v6 = vector_(13,13,13 , 1)
 
-    v_in = vector_(6,7,8)
+    v7 = vector_(1,0,0 , 0)
+    v8 = vector_(0,0,0 , 0)
+    v9 = vector_(0,1,1 , 0)
 
-    # print(v1)
+    v10 = vector_(6,6,6 , 2)
+    v11 = vector_(7,6,6 , 2)
+    v12 = vector_(8,7,6 , 2)
 
-    # print(points)
+    v_in = vector_(0.1,0.1,0.1)
+    # v_in = vector_(9,9,9)
+    # v_in = vector_(6,7,7)
 
-    # print(vector_.calculate_distance( 0 , v1 , v3))
+    k_input = 3
 
-    k = 2
+    v_in.classification , points_by_distance = vector_.KNN(k=k_input , v_to_classify=v_in , points=points)
+    
+    print(v_in.classification)
 
-    for i in points :
-        # print(vector_.calculate_distance( 0 , i , v_in))
-        if (vector_.calculate_distance( 0 , i , v_in) != 0):
+    plot_points(points_by_distance, v_in , k_input)
 
 
 __main__()
