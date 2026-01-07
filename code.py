@@ -7,11 +7,11 @@ from sklearn.model_selection import train_test_split
 
 #---------------------------------------------------------------------------------------------------------------------------
 points = [] # every element of it is a point with 4 atributes
+iterative_test_by_distancetype_res= []
 #---------------------------------------------------------------------------------------------------------------------------
 
 #---------------------------------------------------------------------------------------------------------------------------
 class Linear_Algebra : 
-
 #---------------------------------------------------------------------------------------------------------------------------
 # the objects get made by 4 atributes : (x, y, z, classification) ---> basicaly a datastructure!
 # and then the objects get added to a global list (points) for easier access
@@ -147,9 +147,6 @@ class Linear_Algebra :
             if (points[i].classification not in temp and points[i].classification != None) :
                 temp.append(points[i].classification)
                 count_ += 1
-        
-        # print(count_)
-        # print(temp)
 
         temp = [0] * count_
         for i in range (0 , k):
@@ -240,8 +237,58 @@ def test_knn_accuracy(X_test, y_test, k=3, distance_mode=0):
 #---------------------------------------------------------------------------------------------------------------------------
 
 #---------------------------------------------------------------------------------------------------------------------------
+def print_iterative_test_by_distancetype( res_tupple , res_type ) : 
+    i , j = res_tupple
+
+    # print("--------------------------------")
+    print (res_type)
+    print(f"     Predicted class: {i}")
+    print(f"     Actual    class: {j}\n")
+
+#---------------------------------------------------------------------------------------------------------------------------
+
+#---------------------------------------------------------------------------------------------------------------------------
+def iterative_test_by_distancetype() : 
+    k_input = 3
+    
+
+    global iterative_test_by_distancetype_res
+
+    for i in range (0 , 7) : 
+        distance_mode = i        
+
+        X_train, X_test, y_train, y_test = load_iris_dataset()
+
+        create_vectors_from_dataset(X_train, y_train)
+    
+        test_point = Linear_Algebra(X_test[0][0], X_test[0][1], X_test[0][2])
+        predicted, points_by_distance = Linear_Algebra.KNN(k=k_input, v_to_classify=test_point, points=points , distance_mode=distance_mode)
+    
+        # print(f"\nPredicted class: {predicted}")
+        # print(f"Actual class: {int(y_test[0])}")
+
+        iterative_test_by_distancetype_res.append((predicted , int(y_test[0])))
+
+
+    # for i in iterative_test_by_distancetype_res :
+    #     print(i)
+    
+    print_iterative_test_by_distancetype( iterative_test_by_distancetype_res[0] , "---> Euclidean distance")
+    print_iterative_test_by_distancetype( iterative_test_by_distancetype_res[1] , "---> Manhattan distance")
+    print_iterative_test_by_distancetype( iterative_test_by_distancetype_res[2] , "---> Chebyshev distance")
+    print_iterative_test_by_distancetype( iterative_test_by_distancetype_res[3] , "---> Minkowski distance")
+    print_iterative_test_by_distancetype( iterative_test_by_distancetype_res[4] , "---> Cosine    distance")
+    print_iterative_test_by_distancetype( iterative_test_by_distancetype_res[6] , "---> Canberra  distance")
+    print_iterative_test_by_distancetype( iterative_test_by_distancetype_res[5] , "---> Squared Euclidean distance")
+
+    plot_points(points_by_distance, test_point, k=k_input)
+
+#---------------------------------------------------------------------------------------------------------------------------
+
+#---------------------------------------------------------------------------------------------------------------------------
 def __main__() -> None :
-    # print("!!!!")
+
+    # # ---> simpple example
 
     # v1 = Linear_Algebra(1,1,1 , 0)
     # v2 = Linear_Algebra(2,2,2 , 0)
@@ -270,22 +317,13 @@ def __main__() -> None :
     # print(v_in.classification)
 
     # plot_points(points_by_distance, v_in , k_input)
-    # Load real dataset
 
-    k_input = 4
+    #-----------------------------------------------------
 
-    distance_mode = 0
+    iterative_test_by_distancetype()
 
-    X_train, X_test, y_train, y_test = load_iris_dataset()
-    create_vectors_from_dataset(X_train, y_train)
     
-    test_point = Linear_Algebra(X_test[0][0], X_test[0][1], X_test[0][2])
-    predicted, points_by_distance = Linear_Algebra.KNN(k=k_input, v_to_classify=test_point, points=points , distance_mode=distance_mode)
-    
-    print(f"\nPredicted class: {predicted}")
-    print(f"Actual class: {int(y_test[0])}")
-    
-    plot_points(points_by_distance, test_point, k=k_input)
+
 
 __main__()
 #---------------------------------------------------------------------------------------------------------------------------
