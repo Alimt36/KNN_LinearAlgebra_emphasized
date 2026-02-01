@@ -45,28 +45,6 @@ Creates a point object with 4 attributes: (x, y, z, classification)
 
 ---
 
-## 🚀 Usage Example
-```python
-from code import Linear_Algebra, load_iris_dataset, create_vectors_from_dataset
-
-# Load and prepare dataset
-X_train, X_test, y_train, y_test = load_iris_dataset()
-create_vectors_from_dataset(X_train, y_train)
-
-# Create test point and classify
-test_point = Linear_Algebra(5.1, 3.5, 1.4)
-predicted_class, distances = Linear_Algebra.KNN(
-    k=3, 
-    v_to_classify=test_point, 
-    points=points, 
-    distance_mode=0
-)
-
-print(f"Predicted: {predicted_class}")
-```
-
----
-
 ## 📊 Helper Functions
 
 ### `load_iris_dataset()`
