@@ -1,9 +1,4 @@
 
-#---------------------------------------------------------------------------------------------------------------------------
-# The poject code is also represented as an open-source code in the github platform.
-# https://github.com/Alimt36/KNN_python_implementation
-#---------------------------------------------------------------------------------------------------------------------------
-
 from __future__ import annotations as past
 import matplotlib.pyplot as plt 
 import math
