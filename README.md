@@ -110,5 +110,4 @@ Weighted Manhattan distance, sensitive to small changes near zero
 
 ---
 
-## Author
-[@Alimt36](https://github.com/Alimt36)
+by [@Alimt36](https://github.com/Alimt36)
