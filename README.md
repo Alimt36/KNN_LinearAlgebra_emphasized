@@ -1,4 +1,4 @@
-# K-Nearest Neighbors (KNN) Classifier with Linear Algebra
+# K-Nearest Neighbors (KNN) Classifier with emphasis on Linear Algebra
 
 A Python implementation of K-NN classification emphasizing linear algebra concepts: inner products, vector representations, and distance metrics.
 
@@ -6,7 +6,7 @@ A Python implementation of K-NN classification emphasizing linear algebra concep
 
 ---
 
-## 📖 Class: `Linear_Algebra`
+## Class: `Linear_Algebra`
 
 ### `__init__(x, y, z=0, classification=None)`
 Creates a point object with 4 attributes: (x, y, z, classification)
@@ -45,7 +45,7 @@ Creates a point object with 4 attributes: (x, y, z, classification)
 
 ---
 
-## 📊 Helper Functions
+## Helper Functions
 
 ### `load_iris_dataset()`
 Loads Iris dataset and splits into train/test sets (80/20)
@@ -61,7 +61,7 @@ Creates 3D visualization of classification results
 
 ---
 
-## 🧮 Linear Algebra Connection
+## Linear Algebra Connection
 
 **Vector Representation:** Each data point is a vector in ℝ³ space
 
@@ -110,5 +110,5 @@ Weighted Manhattan distance, sensitive to small changes near zero
 
 ---
 
-## 👤 Author
+## Author
 [@Alimt36](https://github.com/Alimt36)
